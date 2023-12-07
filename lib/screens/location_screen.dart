@@ -1,15 +1,27 @@
+import 'package:clima_flutter/services/location.dart';
 import 'package:clima_flutter/utilities/constants.dart';
 import 'package:flutter/material.dart';
 
 class LocationScreen extends StatefulWidget {
-  const LocationScreen({super.key});
-
+  const LocationScreen({super.key,this.locationWeather});
+  final dynamic locationWeather;
   @override
   State<LocationScreen> createState() => _LocationScreenState();
 }
 
 class _LocationScreenState extends State<LocationScreen> {
   @override
+  void initState() {
+    super.initState();
+    getLocation();
+  }
+  void getLocation()async{
+    Location location = Location();
+    await location.getCurrentLocation();
+    print(location.longitude);
+    print(location.latitude);
+
+  }
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
