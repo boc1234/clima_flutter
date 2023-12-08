@@ -1,4 +1,4 @@
-import 'package:clima_flutter/services/location.dart';
+
 import 'package:clima_flutter/services/weather.dart';
 import 'package:clima_flutter/utilities/constants.dart';
 import 'package:flutter/material.dart';
