@@ -1,10 +1,10 @@
-
+import 'package:clima_flutter/screens/city_screen.dart';
 import 'package:clima_flutter/services/weather.dart';
 import 'package:clima_flutter/utilities/constants.dart';
 import 'package:flutter/material.dart';
 
 class LocationScreen extends StatefulWidget {
-  const LocationScreen({super.key,this.locationWeather});
+  const LocationScreen({super.key, this.locationWeather});
   final dynamic locationWeather;
   @override
   State<LocationScreen> createState() => _LocationScreenState();
@@ -22,8 +22,8 @@ class _LocationScreenState extends State<LocationScreen> {
     super.initState();
     // getLocation();
     updateUI(widget.locationWeather);
-
   }
+
   // void getLocation()async{
   //   Location location = Location();
   //   await location.getCurrentLocation();
@@ -32,28 +32,28 @@ class _LocationScreenState extends State<LocationScreen> {
   //
   //
   // }
-  void updateUI(dynamic weatherData){
+  void updateUI(dynamic weatherData) {
     setState(() {
-      if(weatherData == null){
+      if (weatherData == null) {
         temperature = 0;
         weatherIcon = 'Error';
         weatherMessage = 'Unable to get weather data';
         cityName = '';
         return;
-      }else{
-        double temp = weatherData["main"]["temp"];
-        temperature = temp.toInt();
-        var condition = weatherData["weather"][0]["id"];
-        weatherIcon = weatherModel.getWeatherIcon(condition);
-        weatherMessage = weatherModel.getMessage(temperature);
-        cityName = weatherData["name"];
-
       }
+      double temp = weatherData["main"]["temp"];
+      temperature = temp.toInt();
+      var condition = weatherData["weather"][0]["id"];
+      weatherIcon = weatherModel.getWeatherIcon(condition);
+      weatherMessage = weatherModel.getMessage(temperature);
+      cityName = weatherData["name"];
     });
   }
+
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+    
         decoration: BoxDecoration(
           image: DecorationImage(
               image: AssetImage('images/location_background.jpg'),
@@ -61,52 +61,71 @@ class _LocationScreenState extends State<LocationScreen> {
               colorFilter: ColorFilter.mode(
                   Colors.white.withOpacity(0.8), BlendMode.dstATop)),
         ),
-        constraints: BoxConstraints.expand(),
-        child: SafeArea(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
+        // constraints: BoxConstraints.expand(),
+        child: ClipRect(
+          child: OverflowBox(
+            maxWidth: MediaQuery.of(context).size.width,
+            maxHeight: MediaQuery.of(context).size.height,
+            child: SafeArea(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  TextButton(
-                    onPressed: () {},
-                    child: Icon(
-                      Icons.near_me,
-                      size: 50.0,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextButton(
+                        onPressed: () {},
+                        child: Icon(
+                          Icons.near_me,
+                          size: 50.0,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          var typeName = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CityScreen()));
+              
+                          if (typeName != null) {
+                            var weatherData =
+                                await weatherModel.getCityWeatherData(typeName);
+              
+                            updateUI(weatherData);
+                          }
+                        },
+                        child: Icon(Icons.location_city),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 15.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          '${temperature}°',
+                          style: kTempTextStyle,
+                        ),
+                        Text(
+                          '${weatherIcon}',
+                          style: kConditionTextStyle,
+                        ),
+                      ],
                     ),
                   ),
-                  TextButton(
-                    onPressed: () {},
-                    child: Icon(Icons.location_city),
+                  Padding(
+                    padding: EdgeInsets.only(right: 15.0),
+                    child: Text(
+                      "${weatherMessage} in ${cityName}!",
+                      textAlign: TextAlign.right,
+                      style: kMessageTextStyle,
+                    ),
                   ),
+                  SizedBox(height: 20.0,)
                 ],
               ),
-              Padding(
-                padding: EdgeInsets.only(left: 15.0),
-                child: Row(
-                  children: [
-                    Text(
-                      '${temperature}°',
-                      style: kTempTextStyle,
-                    ),
-                    Text(
-                      '${weatherIcon}',
-                      style: kConditionTextStyle,
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(right: 15.0),
-                child: Text(
-                  "${weatherMessage} in ${cityName}!",
-                  textAlign: TextAlign.right,
-                  style: kMessageTextStyle,
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),

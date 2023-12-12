@@ -22,6 +22,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
   void getLocation() async {
     WeatherModel weatherModel = WeatherModel();
     var weatherData = await weatherModel.getLocationWeatherData();
+    // print(weatherData);
     Navigator.push(
       context,
       MaterialPageRoute(
